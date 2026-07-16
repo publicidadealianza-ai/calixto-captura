@@ -8,6 +8,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Sora:wght@600;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/intl-tel-input/17.0.19/css/intlTelInput.min.css">
 <style>
 :root{
   --ink:#0f1b2d;
@@ -59,11 +60,12 @@ nav{position:sticky;top:0;z-index:50;background:rgba(255,255,255,.85);backdrop-f
 .photo-tag{position:absolute;left:16px;bottom:16px;background:rgba(255,255,255,.92);backdrop-filter:blur(8px);border-radius:12px;padding:10px 16px;box-shadow:0 6px 20px rgba(15,27,45,.12)}
 .photo-tag strong{display:block;font-size:.95rem}
 .photo-tag span{font-size:.78rem;color:var(--muted)}
-.live-feed{position:absolute;top:-12px;right:-16px;width:300px;display:flex;flex-direction:column;gap:12px;z-index:5;pointer-events:none}
+.live-feed{position:absolute;bottom:14px;right:-18px;width:290px;display:flex;flex-direction:column;gap:10px;z-index:5;pointer-events:none}
 .bubble{background:#fff;border:1px solid var(--line);border-radius:14px;padding:12px 14px;box-shadow:0 12px 28px rgba(15,27,45,.14);display:flex;gap:10px;align-items:flex-start;opacity:0;transform:translateX(40px);transition:opacity .5s,transform .5s}
 .bubble.show{opacity:1;transform:translateX(0)}
 .bubble.hide{opacity:0;transform:translateY(-16px)}
-.bubble img{width:38px;height:38px;border-radius:50%;object-fit:cover;flex-shrink:0}
+.bubble .avatar{width:38px;height:38px;border-radius:50%;flex-shrink:0;display:flex;align-items:center;justify-content:center;font-size:.8rem;font-weight:800;color:#fff;position:relative}
+.bubble .avatar::after{content:"";position:absolute;right:-2px;bottom:-2px;width:14px;height:14px;border-radius:50%;background:#25D366 url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="white"><path d="M12 2a10 10 0 0 0-8.6 15.1L2 22l5.1-1.3A10 10 0 1 0 12 2zm5 13.9c-.2.6-1.2 1.1-1.7 1.2-.4 0-.9.2-3.1-.7-2.6-1.1-4.3-3.7-4.4-3.9-.1-.2-1.1-1.4-1.1-2.7s.7-1.9.9-2.2c.2-.2.5-.3.7-.3h.5c.2 0 .4 0 .6.4l.9 2.1c0 .2.1.3 0 .5l-.4.6-.4.5c-.1.1-.3.3-.1.6.2.3.8 1.3 1.7 2.1 1.2 1 2.1 1.4 2.4 1.5.3.1.5.1.6-.1l1-1.2c.2-.2.4-.2.6-.1l2 1c.2.1.4.2.4.3.1.1.1.7-.1 1.4z"/></svg>') center/9px no-repeat;border:2px solid #fff}
 .bubble .b-head{display:flex;align-items:center;gap:6px;margin-bottom:2px}
 .bubble .b-name{font-weight:700;font-size:.82rem}
 .bubble .b-time{font-size:.7rem;color:var(--green);font-weight:600;display:flex;align-items:center;gap:4px}
@@ -135,6 +137,15 @@ nav{position:sticky;top:0;z-index:50;background:rgba(255,255,255,.85);backdrop-f
 .tf-back{background:none;border:none;color:var(--muted);font-size:.85rem;font-weight:600;cursor:pointer;margin-left:auto;font-family:inherit}
 .tf-back:hover{color:var(--blue)}
 .tf-error{color:#dc2626;font-size:.82rem;margin-top:10px;display:none}
+.tf-suggest{position:relative}
+.tf-suggest-list{position:absolute;top:100%;left:0;right:0;background:#fff;border:1px solid var(--line);border-radius:12px;box-shadow:0 16px 40px rgba(15,27,45,.15);max-height:216px;overflow-y:auto;z-index:20;display:none;margin-top:6px}
+.tf-suggest-list.open{display:block}
+.tf-suggest-item{padding:12px 16px;font-size:.95rem;cursor:pointer}
+.tf-suggest-item:hover,.tf-suggest-item.hl{background:var(--blue-soft)}
+.tf-suggest-item small{color:var(--muted)}
+.iti{width:100%}
+.iti__selected-flag{border-radius:8px 0 0 8px}
+.tf-step .iti .tf-input{padding-left:8px}
 .tf-success{text-align:center;display:none;animation:tfIn .45s ease}
 .tf-success .big{font-size:3rem;margin-bottom:16px}
 .tf-success h3{font-size:1.4rem;margin-bottom:10px}
@@ -200,7 +211,7 @@ footer{padding:36px 0;border-top:1px solid var(--line);text-align:center;color:v
       <img src="Anhanguera.png" alt="Anhanguera">
       <img src="Unopar.png" alt="Unopar">
       <img src="Kroton.png" alt="Kroton">
-      <img src="Pitágoras.png" alt="Pitágoras">
+      <img src="Pitagoras.png" alt="Pitágoras">
       <img src="Unisud.png" alt="Unisud">
       <img src="Olympus.png" alt="Olympus">
       <img src="Unitrends.png" alt="Unitrends">
@@ -303,7 +314,10 @@ footer{padding:36px 0;border-top:1px solid var(--line);text-align:center;color:v
         <div class="tf-step" data-type="text">
           <div class="tf-count">3 → 8</div>
           <div class="tf-q">Qual é a cidade de atuação?</div>
-          <input class="tf-input" type="text" name="Cidade de atuação" placeholder="Ex.: Curitiba - PR" autocomplete="address-level2">
+          <div class="tf-suggest">
+            <input class="tf-input" id="tfCity" type="text" name="Cidade de atuação" placeholder="Comece a digitar... Ex.: Curitiba" autocomplete="off">
+            <div class="tf-suggest-list" id="citySuggest"></div>
+          </div>
           <div class="tf-error">Preencha este campo para continuar.</div>
           <div class="tf-nav">
             <button class="btn btn-primary tf-next">OK ✓</button>
@@ -371,8 +385,8 @@ footer{padding:36px 0;border-top:1px solid var(--line);text-align:center;color:v
         <div class="tf-step" data-type="text">
           <div class="tf-count">8 → 8</div>
           <div class="tf-q">Para finalizar: qual o seu WhatsApp?</div>
-          <input class="tf-input" type="tel" name="WhatsApp" placeholder="(00) 00000-0000" autocomplete="tel">
-          <div class="tf-error">Preencha este campo para continuar.</div>
+          <input class="tf-input" id="tfPhone" type="tel" name="WhatsApp" placeholder="(55) 99999-9999" autocomplete="tel">
+          <div class="tf-error">Digite um número de WhatsApp válido.</div>
           <div class="tf-nav">
             <button class="btn btn-primary tf-next" id="tfSubmit">Enviar respostas →</button>
             <button class="tf-back">← Voltar</button>
@@ -400,24 +414,28 @@ footer{padding:36px 0;border-top:1px solid var(--line);text-align:center;color:v
 <script>
 // ===== Live feedback bubbles =====
 const feedbacks = [
-  {name:"Mariana Duarte", img:"https://randomuser.me/api/portraits/women/44.jpg", text:"Bruno, fechamos o mês com 41 matrículas vindas do funil! 🎉"},
-  {name:"Ricardo Almeida", img:"https://randomuser.me/api/portraits/men/32.jpg", text:"Melhor custo por matrícula que já tivemos em 3 anos."},
-  {name:"Fernanda Costa", img:"https://randomuser.me/api/portraits/women/68.jpg", text:"A secretaria agora recebe lead pronto pra fechar. Mudou o jogo."},
-  {name:"João Pedro Santos", img:"https://randomuser.me/api/portraits/men/75.jpg", text:"Pela primeira vez sabemos quantas matrículas vêm no próximo semestre."},
-  {name:"Camila Rocha", img:"https://randomuser.me/api/portraits/women/33.jpg", text:"Batemos a meta de captação 3 semanas antes do prazo!"},
-  {name:"André Oliveira", img:"https://randomuser.me/api/portraits/men/41.jpg", text:"Ganhamos a viagem pra Dubai de novo! 🏆"},
-  {name:"Patrícia Lima", img:"https://randomuser.me/api/portraits/women/56.jpg", text:"Saímos da dependência de indicação. Agora o funil trabalha por nós."},
-  {name:"Lucas Ferreira", img:"https://randomuser.me/api/portraits/men/22.jpg", text:"+62% de matrículas no polo comparado ao semestre passado."}
+  {name:"Mariana Duarte", color:"#7c3aed", text:"Bruno, fechamos o mês com 41 matrículas vindas do funil! 🎉"},
+  {name:"Ricardo Almeida", color:"#0e9f6e", text:"Melhor custo por matrícula que já tivemos em 3 anos."},
+  {name:"Fernanda Costa", color:"#db2777", text:"A secretaria agora recebe lead pronto pra fechar. Mudou o jogo."},
+  {name:"João Pedro Santos", color:"#1d4ed8", text:"Pela primeira vez sabemos quantas matrículas vêm no próximo semestre."},
+  {name:"Camila Rocha", color:"#d97706", text:"Batemos a meta de captação 3 semanas antes do prazo!"},
+  {name:"André Oliveira", color:"#0891b2", text:"Ganhamos a viagem pra Dubai de novo! 🏆"},
+  {name:"Patrícia Lima", color:"#be123c", text:"Saímos da dependência de indicação. Agora o funil trabalha por nós."},
+  {name:"Lucas Ferreira", color:"#4d7c0f", text:"+62% de matrículas no polo comparado ao semestre passado."}
 ];
 const times = ["agora", "há 1 min"];
 const feed = document.getElementById("liveFeed");
 let fIdx = 0;
-const MAX_VISIBLE = window.innerWidth <= 560 ? 1 : 3;
+const MAX_VISIBLE = window.innerWidth <= 560 ? 1 : 2;
+function initials(name){
+  const p = name.trim().split(/\s+/);
+  return (p[0][0] + p[p.length-1][0]).toUpperCase();
+}
 function addBubble(){
   const f = feedbacks[fIdx % feedbacks.length]; fIdx++;
   const el = document.createElement("div");
   el.className = "bubble";
-  el.innerHTML = `<img src="${f.img}" alt="" loading="lazy" onerror="this.style.display='none'">
+  el.innerHTML = `<div class="avatar" style="background:${f.color}">${initials(f.name)}</div>
     <div><div class="b-head"><span class="b-name">${f.name}</span><span class="b-time">${times[Math.floor(Math.random()*times.length)]}</span></div>
     <div class="b-text">${f.text}</div></div>`;
   feed.appendChild(el);
@@ -457,6 +475,12 @@ function validate(step){
   if(step.dataset.type === "text"){
     const input = step.querySelector(".tf-input");
     if(!input.value.trim()){ err.style.display="block"; return false; }
+    if(input.id === "tfPhone"){
+      if(!iti || !iti.isValidNumber()){ err.style.display="block"; return false; }
+      answers[input.name] = iti.getNumber(); // formato internacional +55...
+      err.style.display="none";
+      return true;
+    }
     answers[input.name] = input.value.trim();
   } else {
     const sel = step.querySelector(".tf-option.selected");
@@ -535,6 +559,63 @@ async function submit(){
 }
 
 document.getElementById("year").textContent = new Date().getFullYear();
+
+// ===== Autocomplete de cidades (IBGE) =====
+const cityInput = document.getElementById("tfCity");
+const citySuggest = document.getElementById("citySuggest");
+let cities = null, citiesLoading = false;
+
+function normalize(s){ return s.normalize("NFD").replace(/[\u0300-\u036f]/g,"").toLowerCase(); }
+
+async function loadCities(){
+  if(cities || citiesLoading) return;
+  citiesLoading = true;
+  try{
+    const r = await fetch("https://servicodados.ibge.gov.br/api/v1/localidades/municipios?orderBy=nome");
+    const data = await r.json();
+    cities = data.map(m => ({
+      label: m.nome + " - " + m.microrregiao.mesorregiao.UF.sigla,
+      norm: normalize(m.nome)
+    }));
+  }catch(e){ cities = []; }
+  citiesLoading = false;
+}
+cityInput.addEventListener("focus", loadCities);
+
+cityInput.addEventListener("input", ()=>{
+  const q = normalize(cityInput.value.trim());
+  if(!cities || q.length < 2){ citySuggest.classList.remove("open"); return; }
+  const starts = [], contains = [];
+  for(const c of cities){
+    if(c.norm.startsWith(q)) starts.push(c);
+    else if(c.norm.includes(q)) contains.push(c);
+    if(starts.length >= 8) break;
+  }
+  const results = starts.concat(contains).slice(0, 8);
+  if(!results.length){ citySuggest.classList.remove("open"); return; }
+  citySuggest.innerHTML = results.map(c => `<div class="tf-suggest-item" data-v="${c.label}">${c.label}</div>`).join("");
+  citySuggest.classList.add("open");
+  citySuggest.querySelectorAll(".tf-suggest-item").forEach(item=>{
+    item.addEventListener("mousedown", e=>{
+      e.preventDefault();
+      cityInput.value = item.dataset.v;
+      citySuggest.classList.remove("open");
+    });
+  });
+});
+cityInput.addEventListener("blur", ()=> setTimeout(()=>citySuggest.classList.remove("open"), 150));
+
+// ===== Telefone internacional com validação =====
+let iti = null;
+</script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/intl-tel-input/17.0.19/js/intlTelInput.min.js"></script>
+<script>
+iti = window.intlTelInput(document.getElementById("tfPhone"), {
+  initialCountry: "br",
+  preferredCountries: ["br","py","ar","uy","pt","us"],
+  separateDialCode: true,
+  utilsScript: "https://cdnjs.cloudflare.com/ajax/libs/intl-tel-input/17.0.19/js/utils.js"
+});
 </script>
 </body>
 </html>
